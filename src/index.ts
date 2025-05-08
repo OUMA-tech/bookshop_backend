@@ -7,6 +7,7 @@ import connectDB from './config/database';
 import morgan from 'morgan';
 
 import authRoutes from './routes/authRoutes';
+import { protect } from './middlewares/authMiddleware';
 // import productRoutes from './routes/productRoutes';
 // import cartRoutes from './routes/cartRoutes';
 
@@ -28,6 +29,9 @@ app.use((req, res, next) => {
     next();
   });
 app.use('/api/auth', authRoutes);
+app.get('/api/protected', protect, (req, res) => {
+  res.json({ message: `Hello ${req.user?.email}` });
+});
 // app.use('/api/products', productRoutes);
 // app.use('/api/cart', cartRoutes);
 

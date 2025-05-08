@@ -83,9 +83,33 @@ export const loginUser = async (req: Request, res: Response):Promise<void>=> {
             lastLogin: user.lastLogin,
             },
         });
-        } catch (error) {
-            console.error('Login error:', (error as Error).message);
-            res.status(500).json({ message: 'Internal Server Error' });
-        }
+    } catch (error) {
+        console.error('Login error:', (error as Error).message);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }    
 };
+
+declare global {
+  namespace Express {
+    export interface Request {
+      user?: IUser; 
+    }
+  }
+}
+
+export const getProfile = async (req: Request, res: Response): Promise<void> => {
+    if (!req.user) {
+        res.status(404).json({ message: 'User not found' });
+        return ;
+    }
+  
+    res.json({
+      id: req.user._id,
+      username: req.user.username,
+      email: req.user.email,
+      profileImage: req.user.profileImage,
+      role: req.user.role,
+      status: req.user.status,
+    });
+  };
 
