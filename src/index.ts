@@ -1,46 +1,27 @@
 // src/index.ts
-import express, { Application } from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import bodyParser from 'body-parser';
+import app from './app';
 import connectDB from './config/database';
-import morgan from 'morgan';
-
-import authRoutes from './routes/authRoutes';
-import { protect } from './middlewares/authMiddleware';
-// import productRoutes from './routes/productRoutes';
-// import cartRoutes from './routes/cartRoutes';
+import dotenv from 'dotenv';
 
 dotenv.config();
-const app: Application = express();
 const PORT = process.env.PORT||5000;
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(morgan('dev'));
-app.use((req, res, next) => {
-    console.log('--- Incoming Request ---');
-    console.log('Headers:', JSON.stringify(req.headers, null, 2));
-    console.log('Body:', JSON.stringify(req.body, null, 2));
-    console.log('Params:', JSON.stringify(req.params, null, 2));
-    console.log('Query:', JSON.stringify(req.query, null, 2));
-    console.log('------------------------');
-    next();
-  });
-app.use('/api/auth', authRoutes);
-app.get('/api/protected', protect, (req, res) => {
-  res.json({ message: `Hello ${req.user?.email}` });
-});
-// app.use('/api/products', productRoutes);
-// app.use('/api/cart', cartRoutes);
 
-  
-
-// Database Connection
-connectDB();
-
-// Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+const startServer = async () => {
+  try {
+    await connectDB(); // Database Connection
+    // Start Server
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+};
+
+startServer();

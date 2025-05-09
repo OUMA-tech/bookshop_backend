@@ -59,3 +59,12 @@ export const protect = async (req: Request, res: Response, next: NextFunction):P
     return ;
   }
 };
+
+export const isAdmin = (req: Request, res: Response, next: NextFunction):void => {
+  const user = req.user;
+  if (user && user.role === 'admin') {
+    next();
+  }
+  res.status(403).json({ message: 'need admin authorized' });
+  return ;
+};
