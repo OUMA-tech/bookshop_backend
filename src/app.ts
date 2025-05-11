@@ -28,8 +28,8 @@ app.use((req, res, next) => {
   });
 app.use(express.json());
 // app.options('*', cors());
-// app.use('/api/auth', authRoutes);
-app.use('/api', bookRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/books', bookRoutes);
 // app.use('/api/cart', cartRoutes);
 
   

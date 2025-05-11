@@ -69,4 +69,64 @@ describe('Book API', () => {
     expect(res.status).toBe(200);
     expect(res.body.message).toBe('Book deleted successfully');
   });
+
+  it('should return a list of books', async () => {
+    // 创建一些假数据
+    await BookModel.create({
+      title: 'Test Book 1',
+      author: 'Author 1',
+      category: 'Fiction',
+      price: 100,
+      stock: 5,
+    });
+
+    await BookModel.create({
+      title: 'Test Book 2',
+      author: 'Author 2',
+      category: 'Non-fiction',
+      price: 120,
+      stock: 3,
+    });
+
+    const res = await request(app).get('/api/books').query({ page: 1, pageSize: 10 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.books).toHaveLength(2);  // 确保返回了两个书籍
+    expect(res.body.total).toBe(2);  // 确保总共两本书
+    expect(res.body.page).toBe(1);  // 确保返回的是第一页
+  });
+
+  // 测试用例: 搜索图书
+  it('should return books filtered by search', async () => {
+    await BookModel.create({
+      title: 'Searchable Book',
+      author: 'Search Author',
+      category: 'Fiction',
+      price: 150,
+      stock: 5,
+    });
+
+    const res = await request(app).get('/api/books').query({ search: 'Searchable', page: 1, pageSize: 10 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.books).toHaveLength(1);  // 应该只返回一个书籍
+    expect(res.body.books[0].title).toBe('Searchable Book');
+  });
+
+  // 测试用例: 根据分类过滤图书
+  it('should return books filtered by category', async () => {
+    await BookModel.create({
+      title: 'Category Book',
+      author: 'Category Author',
+      category: 'Technology',
+      price: 200,
+      stock: 5,
+    });
+
+    const res = await request(app).get('/api/books').query({ category: 'Technology', page: 1, pageSize: 10 });
+
+    expect(res.status).toBe(200);
+    expect(res.body.books).toHaveLength(1);  // 应该返回一个属于 Technology 类别的书籍
+    expect(res.body.books[0].category).toBe('Technology');
+  });
 });

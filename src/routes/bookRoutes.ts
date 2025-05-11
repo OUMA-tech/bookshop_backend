@@ -1,6 +1,6 @@
 // src/routes/book.routes.ts
 import express from 'express';
-import { createBook, updateBook, deleteBook } from '../controllers/bookController';
+import { createBook, updateBook, deleteBook, getBooks } from '../controllers/bookController';
 // import { protect, isAdmin } from '../middlewares/authMiddleware'; 
 
 // for test
@@ -16,9 +16,9 @@ const isAdmin = isTestEnv ? dummy : require('../middlewares/authMiddleware').isA
 
 const router = express.Router();
 
-router.post('/books', createBook);
-router.put('/books/:id', protect, isAdmin, updateBook);
-router.delete('/books/:id', protect, isAdmin, deleteBook);
-
+router.post('/', createBook);
+router.put('/:id', protect, isAdmin, updateBook);
+router.delete('/:id', protect, isAdmin, deleteBook);
+router.get('/' ,getBooks);
 
 export default router;

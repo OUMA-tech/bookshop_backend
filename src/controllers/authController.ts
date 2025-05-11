@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import User, { IUser } from '../models/userModel';
+import User, { UserModel } from '../models/userModel';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET||'jwt_secret';
@@ -10,7 +10,7 @@ export const registerUser = async (req: Request, res: Response): Promise<void> =
       const { username, email, password } = req.body;
   
       // check whether user already existed
-      const existingUser: IUser | null = await User.findOne({ email });
+      const existingUser: UserModel | null = await User.findOne({ email });
 
       if (existingUser) {
         res.status(400).json({ message: 'User already exists' });
@@ -92,7 +92,7 @@ export const loginUser = async (req: Request, res: Response):Promise<void>=> {
 declare global {
   namespace Express {
     export interface Request {
-      user?: IUser; 
+      user?: UserModel; 
     }
   }
 }
